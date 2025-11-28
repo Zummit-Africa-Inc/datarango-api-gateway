@@ -1,6 +1,7 @@
 package com.datarango.gateway.config;
 
 import com.datarango.gateway.middleware.AuthFilter;
+import com.datarango.gateway.middleware.LoggingFilter;
 import com.datarango.gateway.middleware.RateLimitFilter;
 import com.datarango.gateway.service.MicroserviceClient;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -36,6 +37,15 @@ public class FilterConfig {
         registration.setFilter(authFilter);
         registration.addUrlPatterns("/api/*");
         registration.setOrder(2);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<LoggingFilter> loggingFilterRegistration(LoggingFilter loggingFilter) {
+        FilterRegistrationBean<LoggingFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(loggingFilter);
+        registration.addUrlPatterns("/*");
+        registration.setOrder(0);
         return registration;
     }
 }
