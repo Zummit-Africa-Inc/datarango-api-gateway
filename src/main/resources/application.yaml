@@ -1,0 +1,27 @@
+server:
+  port: 9090
+
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+
+microservices:
+  urls:
+    api-gateway: ${API_GATEWAY_URL:http://localhost:9090}
+    user-service: ${USER_SERVICE_URL:http://localhost:9091}
+    core-service: ${CORE_SERVICE_URL:http://localhost:9092}
+    streaming-service: ${STREAMING_SERVICE_URL:http://localhost:9093}
+    messaging-service: ${MESSAGING_SERVICE_URL:http://localhost:9094}
+
+redis:
+  host: ${REDIS_HOST:localhost}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD:}
+
+rate-limit:
+  requests-per-minute: ${RATE_LIMIT_RPM:60}
+  
+jwt:
+  secret: ${JWT_SECRET:mySecretKey}
+  expiration: ${JWT_EXPIRATION:86400}
