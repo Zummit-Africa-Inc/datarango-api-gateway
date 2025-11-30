@@ -1,6 +1,5 @@
 package com.datarango.gateway.config;
 
-import com.datarango.gateway.middleware.AuthFilter;
 import com.datarango.gateway.middleware.LoggingFilter;
 import com.datarango.gateway.middleware.RateLimitFilter;
 import com.datarango.gateway.service.MicroserviceClient;
@@ -18,25 +17,11 @@ public class FilterConfig {
     }
 
     @Bean
-    public AuthFilter authFilter() {
-        return new AuthFilter();
-    }
-
-    @Bean
     public FilterRegistrationBean<RateLimitFilter> rateLimitFilterRegistration(RateLimitFilter rateLimitFilter) {
         FilterRegistrationBean<RateLimitFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(rateLimitFilter);
         registration.addUrlPatterns("/api/*");
         registration.setOrder(1);
-        return registration;
-    }
-
-    @Bean
-    public FilterRegistrationBean<AuthFilter> authFilterRegistration(AuthFilter authFilter) {
-        FilterRegistrationBean<AuthFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(authFilter);
-        registration.addUrlPatterns("/api/*");
-        registration.setOrder(2);
         return registration;
     }
 

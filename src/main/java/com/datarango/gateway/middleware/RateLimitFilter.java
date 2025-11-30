@@ -69,6 +69,17 @@ public class RateLimitFilter implements Filter {
         if (userId == null)
             return false;
 
+        String cacheKey = "subscription:active:" + userId;
+        String cached = redisTemplate.opsForValue().get(cacheKey);
+
+        if ("true".equals(cached)) {
+            return true;
+        }
+
+        if ("false".equals(cached)) {
+            return false;
+        }
+
         try {
             @SuppressWarnings("rawtypes")
             ResponseEntity<Map> userResponse = microserviceClient.callUserService("/users/" + userId,
@@ -76,12 +87,16 @@ public class RateLimitFilter implements Filter {
                     null, Map.class);
             @SuppressWarnings("unchecked")
             Map<String, Object> user = (Map<String, Object>) userResponse.getBody();
-            if (user == null)
+            if (user == null) {
+                cacheSubscriptionStatus(cacheKey, false, 60);
                 return false;
+            }
 
             String subscriptionId = (String) user.get("subscriptionId");
-            if (subscriptionId == null)
+            if (subscriptionId == null) {
+                cacheSubscriptionStatus(cacheKey, false, 60);
                 return false;
+            }
 
             @SuppressWarnings("rawtypes")
             ResponseEntity<Map> subResponse = microserviceClient.callUserService(
@@ -89,13 +104,33 @@ public class RateLimitFilter implements Filter {
                     HttpMethod.GET, null, Map.class);
             @SuppressWarnings("unchecked")
             Map<String, Object> subscription = (Map<String, Object>) subResponse.getBody();
-            if (subscription == null)
+            if (subscription == null) {
+                cacheSubscriptionStatus(cacheKey, false, 60);
                 return false;
+            }
 
             String expiryStr = (String) subscription.get("expiryDate");
-            return expiryStr != null && LocalDateTime.parse(expiryStr).isAfter(LocalDateTime.now());
+            boolean isActive = expiryStr != null && LocalDateTime.parse(expiryStr).isAfter(LocalDateTime.now());
+
+            cacheSubscriptionStatus(cacheKey, isActive, isActive ? 300 : 60);
+
+            return isActive;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    private void cacheSubscriptionStatus(String cacheKey, boolean status, int seconds) {
+        if (cacheKey == null || cacheKey.isEmpty()) {
+            return;
+        }
+        try {
+            String value = String.valueOf(status);
+            Duration duration = Duration.ofSeconds(seconds);
+            if (value != null && duration != null) {
+                redisTemplate.opsForValue().set(cacheKey, value, duration);
+            }
+        } catch (Exception e) {
         }
     }
 
