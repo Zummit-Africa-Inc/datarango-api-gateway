@@ -18,6 +18,16 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/health", "/health/**").permitAll()
+                        .requestMatchers("/api/users/auth/signup",
+                                "/api/users/auth/signin",
+                                "/api/users/auth/signout",
+                                "/api/users/auth/google",
+                                "/api/users/auth/github",
+                                "/api/users/auth/forgot-password",
+                                "/api/users/auth/reset-password",
+                                "/api/users/auth/refresh")
+                        .permitAll()
+                        .requestMatchers("/api/users/login/**", "/api/users/oauth2/**").permitAll()
                         .anyRequest().authenticated());
 
         return http.build();
