@@ -7,5 +7,8 @@ start:
 build:
 	mvn clean compile
 
+package:
+	mvn clean package
+
 kill:
 	taskkill /f /im java.exe
