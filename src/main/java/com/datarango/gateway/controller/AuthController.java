@@ -18,8 +18,11 @@ public class AuthController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
+    @Value("${access-token-expiration}")
+    private long accessTokenExpiration;
+
+    @Value("${refresh-token-expiration}")
+    private long refreshTokenExpiration;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
@@ -36,7 +39,7 @@ public class AuthController {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration * 1000))
                 .signWith(key)
                 .compact();
     }
