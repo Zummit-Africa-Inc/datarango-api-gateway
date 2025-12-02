@@ -18,10 +18,10 @@ public class AuthController {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${access-token-expiration}")
+    @Value("${jwt.access-token-expiration}")
     private long accessTokenExpiration;
 
-    @Value("${refresh-token-expiration}")
+    @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
     @PostMapping("/login")
