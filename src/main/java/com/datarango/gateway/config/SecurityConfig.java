@@ -4,11 +4,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+        @Autowired
+        private BearerTokenAuthenticationFilter bearerTokenAuthenticationFilter;
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http,
@@ -16,27 +22,18 @@ public class SecurityConfig {
                 http
                                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                                 .csrf(csrf -> csrf.disable())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/", "/health", "/health/**").permitAll()
-                                                .requestMatchers("/test-errors/**").permitAll()
-                                                .requestMatchers("/actuator/health", "/actuator/health/**",
-                                                                "/actuator/prometheus")
-                                                .permitAll()
-                                                .requestMatchers("/actuator/**").authenticated()
-                                                .requestMatchers("/api/users/auth/signup",
-                                                                "/api/users/auth/signin",
-                                                                "/api/users/auth/signout",
-                                                                "/api/users/auth/google",
-                                                                "/api/users/auth/github",
-                                                                "/api/users/auth/forgot-password",
-                                                                "/api/users/auth/reset-password",
-                                                                "/api/users/auth/refresh")
-                                                .permitAll()
+                                                .requestMatchers("/api/users/auth/**").permitAll()
                                                 .requestMatchers("/api/users/login/**",
-                                                                "/api/users/oauth2/authorization/google",
-                                                                "/api/users/oauth2/authorization/github")
+                                                                "/api/users/oauth2/authorization/**")
                                                 .permitAll()
-                                                .anyRequest().authenticated());
+                                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                                .anyRequest().authenticated())
+                                .addFilterBefore(bearerTokenAuthenticationFilter,
+                                                UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }
