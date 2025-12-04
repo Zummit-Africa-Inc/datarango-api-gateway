@@ -2,7 +2,7 @@ package com.datarango.gateway.config;
 
 import com.datarango.gateway.middleware.LoggingFilter;
 import com.datarango.gateway.middleware.RateLimitFilter;
-import com.datarango.gateway.service.MicroserviceClient;
+import com.datarango.gateway.service.EurekaMicroserviceClient;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class FilterConfig {
 
     @Bean
-    public RateLimitFilter rateLimitFilter(RedisTemplate<String, String> redisTemplate, MicroserviceClient microserviceClient) {
+    public RateLimitFilter rateLimitFilter(RedisTemplate<String, String> redisTemplate, EurekaMicroserviceClient microserviceClient) {
         return new RateLimitFilter(redisTemplate, microserviceClient);
     }
 

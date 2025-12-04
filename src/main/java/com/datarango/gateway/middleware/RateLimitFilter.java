@@ -1,6 +1,6 @@
 package com.datarango.gateway.middleware;
 
-import com.datarango.gateway.service.MicroserviceClient;
+import com.datarango.gateway.service.EurekaMicroserviceClient;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,7 +24,7 @@ import java.util.Map;
 public class RateLimitFilter implements Filter {
 
     private final RedisTemplate<String, String> redisTemplate;
-    private final MicroserviceClient microserviceClient;
+    private final EurekaMicroserviceClient microserviceClient;
 
     @Value("${rate-limit.requests-per-minute}")
     private int requestsPerMinute;
@@ -83,8 +83,7 @@ public class RateLimitFilter implements Filter {
         try {
             @SuppressWarnings("rawtypes")
             ResponseEntity<Map> userResponse = microserviceClient.callUserService("/users/" + userId,
-                    HttpMethod.GET,
-                    null, Map.class);
+                    HttpMethod.GET, null, Map.class);
             @SuppressWarnings("unchecked")
             Map<String, Object> user = (Map<String, Object>) userResponse.getBody();
             if (user == null) {
@@ -100,8 +99,7 @@ public class RateLimitFilter implements Filter {
 
             @SuppressWarnings("rawtypes")
             ResponseEntity<Map> subResponse = microserviceClient.callUserService(
-                    "/users/subscriptions/" + subscriptionId,
-                    HttpMethod.GET, null, Map.class);
+                    "/users/subscriptions/" + subscriptionId, HttpMethod.GET, null, Map.class);
             @SuppressWarnings("unchecked")
             Map<String, Object> subscription = (Map<String, Object>) subResponse.getBody();
             if (subscription == null) {
