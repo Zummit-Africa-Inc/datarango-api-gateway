@@ -1,6 +1,6 @@
 package com.datarango.gateway.controller;
 
-import com.datarango.gateway.service.MicroserviceClient;
+import com.datarango.gateway.service.EurekaMicroserviceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class GatewayController {
 
-    private final MicroserviceClient microserviceClient;
+    private final EurekaMicroserviceClient microserviceClient;
 
     @RequestMapping(value = "/api/users/**", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
             RequestMethod.DELETE })
