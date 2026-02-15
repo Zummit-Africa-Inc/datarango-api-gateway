@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class EurekaMicroserviceClient {
     }
 
     private <T> ResponseEntity<T> callService(String serviceName, String fallbackUrl, String endpoint,
-            HttpMethod method, Object body,
+            HttpMethod method, @Nullable Object body,
             Class<T> responseType) {
         String serviceUrl = null;
         try {
@@ -72,6 +74,15 @@ public class EurekaMicroserviceClient {
             }
         }
 
-        return restTemplate.exchange(serviceUrl + endpoint, method, new HttpEntity<>(body), responseType);
+        if (method == null) {
+            throw new IllegalArgumentException("HttpMethod cannot be null");
+        }
+
+        if (responseType == null) {
+            throw new IllegalArgumentException("Response type cannot be null");
+        }
+
+        HttpEntity<?> httpEntity = body != null ? new HttpEntity<>(body) : new HttpEntity<>(new HttpHeaders());
+        return restTemplate.exchange(serviceUrl + endpoint, method, httpEntity, responseType);
     }
 }
