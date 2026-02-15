@@ -137,7 +137,8 @@ public class GlobalExceptionHandler {
                         MethodArgumentTypeMismatchException ex,
                         WebRequest request) {
                 log.error("Type mismatch: {}", ex.getMessage());
-                String typeName = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+                Class<?> requiredType = ex.getRequiredType();
+                String typeName = requiredType != null ? requiredType.getSimpleName() : "unknown";
                 String error = String.format("The parameter '%s' should be of type %s", ex.getName(), typeName);
                 ApiResponse<Object> response = new ApiResponse<>(
                                 false,
