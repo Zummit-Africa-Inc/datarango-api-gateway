@@ -1,0 +1,64 @@
+server:
+  port: 0
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    discovery:
+      enabled: false
+    loadbalancer:
+      enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+azure:
+  storage:
+    connection-string: DefaultEndpointsProtocol=https;AccountName=testaccount;AccountKey=dGVzdGtleQ==;EndpointSuffix=core.windows.net
+    container-name: test-container
+
+microservices:
+  urls:
+    api-gateway: http://localhost:9090
+    user-service: http://localhost:9091
+    core-service: http://localhost:9092
+    streaming-service: http://localhost:9093
+    messaging-service: http://localhost:9094
+
+redis:
+  host: localhost
+  port: 6379
+  password:
+
+rate-limit:
+  requests-per-minute: 60
+
+jwt:
+  secret: YourSecretKeyShouldBeAtLeast256BitsLongForHS256AlgorithmToWorkProperlyAndSecurely
+  access-token-expiration: 3600000
+  refresh-token-expiration: 86400000
+
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:8080
+
+eureka:
+  client:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    redis:
+      enabled: false
