@@ -117,4 +117,4 @@ eureka:
 management:
   health:
     redis:
-      enabled: true
+      enabled: false
