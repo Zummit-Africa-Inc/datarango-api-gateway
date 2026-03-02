@@ -13,10 +13,15 @@ spring:
     compatibility-verifier:
       enabled: false
   mvc:
-    throw-exception-if-no-handler-found: true
-  web:
-    resources:
-      add-mappings: false
+    throw-exception-if-no-handler-found: false
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
   boot:
     admin:
       client:
