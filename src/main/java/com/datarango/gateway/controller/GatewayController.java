@@ -2,6 +2,7 @@ package com.datarango.gateway.controller;
 
 import com.datarango.gateway.dto.ApiResponse;
 import com.datarango.gateway.service.EurekaMicroserviceClient;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class GatewayController {
                 return ApiResponse.success("Welcome to the Datarango API Gateway", null);
         }
 
+        @Hidden
         @RequestMapping(value = "/api/users/**", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
                         RequestMethod.DELETE })
         public ResponseEntity<String> routeToUserService(HttpServletRequest request,
@@ -30,6 +32,7 @@ public class GatewayController {
                                 method != null ? HttpMethod.valueOf(method) : HttpMethod.GET, body, String.class);
         }
 
+        @Hidden
         @RequestMapping(value = "/api/core/**", method = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
                         RequestMethod.DELETE })
         public ResponseEntity<String> routeToCoreService(HttpServletRequest request,
@@ -40,6 +43,7 @@ public class GatewayController {
                                 method != null ? HttpMethod.valueOf(method) : HttpMethod.GET, body, String.class);
         }
 
+        @Hidden
         @RequestMapping(value = "/api/streaming/**", method = { RequestMethod.GET, RequestMethod.POST,
                         RequestMethod.PUT,
                         RequestMethod.DELETE })
@@ -51,6 +55,7 @@ public class GatewayController {
                                 method != null ? HttpMethod.valueOf(method) : HttpMethod.GET, body, String.class);
         }
 
+        @Hidden
         @RequestMapping(value = "/api/messaging/**", method = { RequestMethod.GET, RequestMethod.POST,
                         RequestMethod.PUT,
                         RequestMethod.DELETE })

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@ControllerAdvice
+@ControllerAdvice(basePackages = "com.datarango.gateway.controller")
 public class GlobalExceptionHandler {
 
         @ExceptionHandler(NotFoundException.class)
