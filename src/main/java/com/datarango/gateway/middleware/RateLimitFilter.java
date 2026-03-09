@@ -46,19 +46,23 @@ public class RateLimitFilter implements Filter {
         String clientIp = getClientIp(httpRequest);
         String key = "rate_limit:" + clientIp;
 
-        String count = redisTemplate.opsForValue().get(key);
-        int currentCount = count != null ? Integer.parseInt(count) : 0;
+        try {
+            String count = redisTemplate.opsForValue().get(key);
+            int currentCount = count != null ? Integer.parseInt(count) : 0;
 
-        if (currentCount >= requestsPerMinute) {
-            httpResponse.setStatus(429);
-            httpResponse.getWriter().write("{\"error\":\"Rate limit exceeded\"}");
-            return;
-        }
+            if (currentCount >= requestsPerMinute) {
+                httpResponse.setStatus(429);
+                httpResponse.getWriter().write("{\"error\":\"Rate limit exceeded\"}");
+                return;
+            }
 
-        redisTemplate.opsForValue().increment(key);
-        Duration expiration = Duration.ofMinutes(1);
-        if (expiration != null) {
-            redisTemplate.expire(key, expiration);
+            redisTemplate.opsForValue().increment(key);
+            Duration expiration = Duration.ofMinutes(1);
+            if (expiration != null) {
+                redisTemplate.expire(key, expiration);
+            }
+        } catch (Exception e) {
+            // Redis unavailable - fail open and allow request through
         }
 
         chain.doFilter(request, response);
@@ -70,7 +74,12 @@ public class RateLimitFilter implements Filter {
             return false;
 
         String cacheKey = "subscription:active:" + userId;
-        String cached = redisTemplate.opsForValue().get(cacheKey);
+        String cached = null;
+        try {
+            cached = redisTemplate.opsForValue().get(cacheKey);
+        } catch (Exception e) {
+            // Redis unavailable - proceed without cache
+        }
 
         if ("true".equals(cached)) {
             return true;
